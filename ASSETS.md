@@ -24,13 +24,8 @@ Licenza: generati per questo progetto tramite Pomelli sull'account del committen
 
 ### Tre cose da sapere
 
-**La hero non ha piu' una foto di sfondo.** Le tre barre e la card grande sono superfici chiare:
-il peso visivo lo portano la tipografia e il video laterale. Il mosaico resta in uso solo nella
-sezione 2. Se un giorno torna una foto nella hero, vale comunque la regola qui sotto.
-
-**Il mosaico vuole inquadrature larghe.** Scala la foto sulla larghezza della sezione e ne mostra
-circa un terzo in verticale. Su una figura intera quel terzo e' testa e spalle e funziona; su un
-primo piano sono gli occhi, ed e' inutilizzabile. Verificato due volte, con due foto diverse.
+**La hero non ha foto.** Le tre barre sono state tolte e la card grande e' una superficie chiara:
+il peso visivo lo portano la tipografia e il video laterale.
 
 **La risoluzione e' il limite.** Pomelli esporta a 768px di larghezza. Il mosaico scala le foto a
 1440px, quasi 2x: sono state ingrandite con `lanczos3` piu' `sharpen`, ma su schermi grandi la
@@ -93,30 +88,16 @@ in `public/images/`: il codice non cambia comunque.
 
 ### Vincoli tecnici da rispettare
 
-`hero.webp` e `smile-gallery.webp` non sono immagini normali: sono **sfondi condivisi** da più card
-(tecnica MaskedCard). Ogni card mostra una finestra diversa della stessa immagine, e insieme
-ricompongono un mosaico continuo.
+Nessuna immagine e' piu' condivisa fra card: ognuna sta in un pannello suo con `object-cover`,
+quindi **qualsiasi orientamento va bene**. Conta solo dove cade il soggetto nel ritaglio, che si
+governa con `object-position` sul singolo pannello.
 
-> ⚠️ **Devono essere ORIZZONTALI, almeno 1.75:1.** Non verticali.
->
-> MaskedCard scala l'immagine all'**altezza** della sezione:
-> `backgroundSize: auto <altezzaSezione>px` con `no-repeat`. Una foto verticale, portata a
-> quell'altezza, risulta molto più stretta del viewport e lascia una **fascia vuota a destra**.
-> Il rapporto minimo è quello del viewport: 16:9 va sempre bene.
-> Lo script rifiuta da solo tutto ciò che sta sotto 1.75:1.
-
-- **Il punto focale sta a destra** (`focalX` 0.7–0.8): il volto va nella metà destra del fotogramma,
-  a sinistra serve spazio negativo chiaro perché ci va sopra il titolo "Cure dentali" in nero.
-- **Fondo chiaro e uniforme**, altrimenti il testo nero sopra la card hero non si legge.
-- Il soggetto deve reggere **tagliato a fasce orizzontali**: le tre barre in alto ne mostrano
-  strisce da 56–80 px.
-
-Le altre tre sono immagini normali (`object-cover`), con un solo vincolo di forma:
-
-| File | Forma | Perché |
+| File | Forma consigliata | Perche' |
 |---|---|---|
+| `smile-gallery` | verticale o quadrata | riempie una colonna alta a sinistra, col titolo in sovrimpressione in basso |
 | `implant-1` · `implant-2` | quadrata | stanno affiancate in una riga `flex-1` |
-| `patient` | **verticale 2:3** | riempie una colonna alta, e la card di chiusura ne ritaglia una fascia attorno alla bocca |
+| `igiene` | verticale 2:3 | colonna alta della sezione 3 |
+| `showcase` | verticale 2:3 | la card di chiusura ritaglia una fascia attorno alla bocca, e la linea di richiamo deve cadere su un dente |
 
 ### Da generare con
 

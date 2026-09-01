@@ -62,10 +62,11 @@ tocca il CSS dell'admin Payload.
 
 ## Le cose non ovvie
 
-**MaskedCard (landing).** Le sezioni 1 e 2 non hanno un'immagine per card: hanno *una* immagine
-condivisa. Ogni card calcola il proprio offset rispetto alla sezione con un `ResizeObserver` e
-mostra la finestra corrispondente via `background-position` negativo. Le card insieme
-ricompongono un mosaico continuo. Vincoli per sostituire quelle immagini → [ASSETS.md](ASSETS.md).
+**Le immagini stanno in pannelli propri.** La versione iniziale spezzava una sola foto su piu'
+card (tecnica MaskedCard) per ricomporre un mosaico. Con le foto verticali dei generatori quella
+tecnica mostrava un terzo del fotogramma e continuava a inquadrare male, quindi e' stata rimossa:
+ogni immagine ora vive in un pannello suo, con `object-cover`. Vincoli per sostituirle →
+[ASSETS.md](ASSETS.md).
 
 **La fine dello slot non si scrive a mano.** L'hook `beforeChange` di `Appointments` ricalcola
 sempre `end` da `start` + `durationMinutes` della prestazione. Cambi la durata di una prestazione

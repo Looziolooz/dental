@@ -5,9 +5,9 @@
  * splash e navbar fissa.
  * Nome, claim e contatti vengono da src/lib/brand.ts.
  *
- * Tecnica portante: MASKED CARDS. Le sezioni 1 e 2 condividono una sola immagine di sfondo;
- * ogni card ne mostra una finestra diversa calcolando il proprio offset rispetto alla sezione.
- * Il risultato e' un mosaico coerente invece di N immagini scollegate.
+ * Impaginazione a pannelli: ogni sezione e' una griglia di card ad angoli tondi separate da
+ * pochi pixel, e ogni immagine sta in un pannello suo. La versione precedente spezzava una sola
+ * foto su piu' card (mosaico); non e' piu' in uso.
  */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -26,15 +26,7 @@ const SECTION3_IMG3 = '/images/igiene.webp'
 const HERO_VIDEO = '/video/studio.mp4'
 const HERO_VIDEO_POSTER = '/video/studio-poster.webp'
 
-/**
- * Quanto scendere nella foto quando e' VERTICALE (0 = bordo alto, 1 = bordo basso).
- * Usato dal mosaico della sezione 2; ignorato sulle foto orizzontali.
- */
-const SECTION2_FOCAL_Y = 0.33
-
 /* ------------------------------------------------------------------- dati */
-const featureBars = ['Odontoiatria avanzata', "Strumenti all'avanguardia", 'Personale accogliente']
-
 // I nomi vanno su due righe: il \n e' reso da whitespace-pre-line.
 const services = [
   { name: 'Faccette\ndentali', num: '01', active: true },
@@ -52,113 +44,6 @@ const navLinks = [
 ]
 
 /* ------------------------------------------------------------------- hook */
-
-type MaskPosition = { x: number; y: number; sw: number; sh: number }
-
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)')
-    const update = () => setIsMobile(mq.matches)
-    update()
-    mq.addEventListener('change', update)
-    return () => mq.removeEventListener('change', update)
-  }, [])
-
-  return isMobile
-}
-
-/**
- * Offset di ogni card rispetto al contenitore di sezione.
- * Ricalcolato via ResizeObserver: al resize il mosaico resta allineato.
- */
-function useMaskPositions(
-  sectionRef: React.RefObject<HTMLElement | null>,
-  cardsRef: React.RefObject<(HTMLDivElement | null)[]>,
-) {
-  const [positions, setPositions] = useState<MaskPosition[]>([])
-
-  useEffect(() => {
-    const section = sectionRef.current
-    if (!section) return
-
-    const compute = () => {
-      const sr = section.getBoundingClientRect()
-      setPositions(
-        (cardsRef.current ?? []).map((el) => {
-          if (!el) return { x: 0, y: 0, sw: sr.width, sh: sr.height }
-          const cr = el.getBoundingClientRect()
-          return { x: cr.left - sr.left, y: cr.top - sr.top, sw: sr.width, sh: sr.height }
-        }),
-      )
-    }
-
-    compute()
-    const ro = new ResizeObserver(compute)
-    ro.observe(section)
-    const cards = cardsRef.current ?? []
-    cards.forEach((el) => {
-      if (el) ro.observe(el)
-    })
-    return () => ro.disconnect()
-  }, [sectionRef, cardsRef])
-
-  return positions
-}
-
-type MaskFit = { backgroundSize: string; offsetX: number; offsetY: number }
-
-/**
- * Come adagiare l'immagine condivisa sulla sezione, in qualunque orientamento.
- *
- * Il mosaico funziona solo se l'immagine copre TUTTA la sezione: se resta
- * scoperto un lato, le card mostrano una fascia vuota. Ci sono due modi, e
- * quale serve dipende dalle proporzioni della foto rispetto a quelle della
- * sezione:
- *
- * - foto piu' larga della sezione → la scalo sull'ALTEZZA e faccio scorrere in
- *   orizzontale (focalX). E' il caso delle 16:9.
- * - foto piu' stretta → la scalo sulla LARGHEZZA e faccio scorrere in
- *   VERTICALE (focalY). E' il caso delle 9:16 che escono dai generatori.
- *
- * Prima esisteva solo il primo caso, e una foto verticale lasciava una banda
- * vuota a destra.
- */
-function useMaskFit(
-  src: string,
-  sectionWidth: number,
-  sectionHeight: number,
-  focalX: number,
-  focalY: number,
-): MaskFit | null {
-  const [natural, setNatural] = useState<{ w: number; h: number } | null>(null)
-
-  useEffect(() => {
-    const img = new window.Image()
-    img.onload = () => setNatural({ w: img.naturalWidth, h: img.naturalHeight })
-    img.src = src
-  }, [src])
-
-  if (!natural || !sectionWidth || !sectionHeight) return null
-
-  const widthAtSectionHeight = natural.w * (sectionHeight / natural.h)
-
-  if (widthAtSectionHeight >= sectionWidth) {
-    return {
-      backgroundSize: `auto ${sectionHeight}px`,
-      offsetX: (widthAtSectionHeight - sectionWidth) * focalX,
-      offsetY: 0,
-    }
-  }
-
-  const heightAtSectionWidth = natural.h * (sectionWidth / natural.w)
-  return {
-    backgroundSize: `${sectionWidth}px auto`,
-    offsetX: 0,
-    offsetY: Math.max(heightAtSectionWidth - sectionHeight, 0) * focalY,
-  }
-}
 
 /** Entrata a cascata: scatta una volta sola quando la sezione entra in viewport. */
 function useStaggeredReveal(threshold = 0.15) {
@@ -240,47 +125,6 @@ function LoopingVideo({
       playsInline
       preload="metadata"
     />
-  )
-}
-
-/* -------------------------------------------------------------- MaskedCard */
-
-function MaskedCard({
-  bgImage,
-  position,
-  fit,
-  className,
-  children,
-  cardRef,
-  style,
-}: {
-  bgImage: string
-  position?: MaskPosition
-  fit: MaskFit | null
-  className?: string
-  children?: ReactNode
-  cardRef?: (el: HTMLDivElement | null) => void
-  style?: CSSProperties
-}) {
-  const pos = position ?? { x: 0, y: 0, sw: 0, sh: 0 }
-
-  return (
-    <div
-      ref={cardRef}
-      className={className}
-      style={{
-        ...style,
-        backgroundImage: `url(${bgImage})`,
-        // Finche' non conosco le proporzioni della foto, `cover` evita il lampo bianco.
-        backgroundSize: fit ? fit.backgroundSize : 'cover',
-        backgroundPosition: fit
-          ? `-${pos.x + fit.offsetX}px -${pos.y + fit.offsetY}px`
-          : 'center',
-        backgroundRepeat: 'no-repeat',
-      }}
-    >
-      {children}
-    </div>
   )
 }
 
@@ -443,59 +287,47 @@ function SectionHero() {
       ref={(el) => {
         reveal.containerRef.current = el
       }}
-      className="h-screen w-full overflow-hidden flex flex-col pt-24 md:pt-24 px-3 md:px-5 pb-1.5 md:pb-2 gap-1.5 md:gap-2"
+      className="h-screen w-full overflow-hidden flex pt-24 md:pt-24 px-3 md:px-5 pb-1.5 md:pb-2 gap-1.5 md:gap-2"
     >
-      {featureBars.map((label, i) => (
-        <div
-          key={label}
-          style={reveal.getAnimStyle(i)}
-          className="w-full h-14 md:h-20 shrink-0 rounded-xl md:rounded-2xl bg-stone-100 flex items-center justify-center"
-        >
-          <span className="text-black text-lg md:text-3xl font-bold text-center">{label}</span>
-        </div>
-      ))}
+      <div
+        style={reveal.getAnimStyle(0)}
+        className="flex-1 min-w-0 rounded-xl md:rounded-2xl bg-stone-50 relative overflow-hidden"
+      >
+        <p className="absolute top-5 left-5 md:top-8 md:left-8 text-black text-xs md:text-sm font-semibold leading-4 md:leading-5 max-w-[220px] md:max-w-[320px]">
+          Cure odontoiatriche professionali,
+          <br />
+          con la tecnologia di oggi
+        </p>
 
-      <div className="w-full flex-1 min-h-0 flex gap-1.5 md:gap-2">
-        <div
-          style={reveal.getAnimStyle(3)}
-          className="flex-1 min-w-0 rounded-xl md:rounded-2xl bg-stone-50 relative overflow-hidden"
-        >
-          <p className="absolute top-4 left-4 md:top-7 md:left-7 text-black text-xs md:text-sm font-semibold leading-4 md:leading-5 max-w-[200px] md:max-w-[300px]">
-            Cure odontoiatriche professionali,
-            <br />
-            con la tecnologia di oggi
-          </p>
-
-          <div className="absolute bottom-5 left-3 md:bottom-8 md:left-4">
-            <span className="block text-black text-xs md:text-sm font-semibold mb-1 md:mb-2">
-              {BRAND.claim}
-            </span>
-            <h1 className="text-black text-[clamp(3rem,10vw,10rem)] font-bold leading-[0.79] tracking-tight">
-              Cure
-              <br />
-              dentali
-            </h1>
-          </div>
-
-          <span className="absolute bottom-6 right-4 md:bottom-10 md:right-8 text-black text-xs md:text-sm font-semibold">
-            Prima visita gratuita
+        <div className="absolute bottom-5 left-3 md:bottom-8 md:left-4">
+          <span className="block text-black text-xs md:text-sm font-semibold mb-1 md:mb-2">
+            {BRAND.claim}
           </span>
+          <h1 className="text-black text-[clamp(3.5rem,12vw,12rem)] font-bold leading-[0.79] tracking-tight">
+            Cure
+            <br />
+            dentali
+          </h1>
         </div>
 
-        {/* Colonna video: i 9:16 dei generatori ci stanno senza ritagli.
-            Senza foto di sfondo e' l'unica immagine della sezione, quindi porta
-            tutto il peso visivo. Nascosta sotto md, dove l'hero e' gia' pieno. */}
-        <div
-          style={reveal.getAnimStyle(3)}
-          className="hidden md:block w-[30%] shrink-0 rounded-2xl overflow-hidden relative"
-        >
-          <LoopingVideo
-            src={HERO_VIDEO}
-            poster={HERO_VIDEO_POSTER}
-            label="Una visita nello studio"
-            className="w-full h-full object-cover"
-          />
-        </div>
+        <span className="absolute bottom-6 right-4 md:bottom-10 md:right-8 text-black text-xs md:text-sm font-semibold">
+          Prima visita gratuita
+        </span>
+      </div>
+
+      {/* Colonna video: i 9:16 dei generatori ci stanno senza ritagli, ed e'
+          l'unica immagine della sezione. Nascosta sotto md, dove l'hero e'
+          gia' pieno per l'altezza. */}
+      <div
+        style={reveal.getAnimStyle(1)}
+        className="hidden md:block w-[30%] shrink-0 rounded-2xl overflow-hidden relative"
+      >
+        <LoopingVideo
+          src={HERO_VIDEO}
+          poster={HERO_VIDEO_POSTER}
+          label="Una visita nello studio"
+          className="w-full h-full object-cover"
+        />
       </div>
     </section>
   )
@@ -504,121 +336,90 @@ function SectionHero() {
 /* --------------------------------------------------------------- SECTION 2 */
 
 function SectionGallery() {
-  const sectionRef = useRef<HTMLElement | null>(null)
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([])
   const reveal = useStaggeredReveal()
-  const isMobile = useIsMobile()
-
-  const positions = useMaskPositions(sectionRef, cardsRef)
-  const fit = useMaskFit(
-    SECTION2_IMAGE,
-    positions[0]?.sw ?? 0,
-    positions[0]?.sh ?? 0,
-    isMobile ? 0.65 : 0.8,
-    SECTION2_FOCAL_Y,
-  )
-
-  const setRefs = (el: HTMLElement | null) => {
-    sectionRef.current = el
-    reveal.containerRef.current = el
-  }
-  const setCard = (i: number) => (el: HTMLDivElement | null) => {
-    cardsRef.current[i] = el
-  }
-
-  const mask = { bgImage: SECTION2_IMAGE, fit }
 
   return (
     <section
       id="gallery"
-      ref={setRefs}
+      ref={(el) => {
+        reveal.containerRef.current = el
+      }}
       className="min-h-screen md:h-screen w-full overflow-hidden flex flex-col pt-1.5 md:pt-2 px-3 md:px-5 pb-1.5 md:pb-2 gap-1.5 md:gap-2"
     >
-      <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-2 grid-rows-[auto_auto_auto_auto] md:grid-rows-[1fr_1fr_0.8fr] gap-1.5 md:gap-2">
-        <MaskedCard
-          {...mask}
-          position={positions[0]}
-          cardRef={setCard(0)}
+      <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-2 md:grid-rows-[1fr_1fr_0.8fr] gap-1.5 md:gap-2">
+        {/* La foto sta tutta qui: una colonna sola, non piu' spezzata su tutta la sezione. */}
+        <div
           style={reveal.getAnimStyle(0)}
-          className="rounded-xl md:rounded-2xl overflow-hidden relative min-h-[160px] md:min-h-0"
+          className="md:row-span-2 rounded-xl md:rounded-2xl overflow-hidden relative min-h-[320px] md:min-h-0"
         >
-          <h2 className="absolute top-4 left-5 md:top-6 md:left-7 text-white md:text-black text-2xl md:text-3xl font-bold z-10">
-            I nostri sorrisi
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={SECTION2_IMAGE}
+            alt="Sorriso dopo un trattamento di estetica dentale"
+            className="w-full h-full object-cover"
+            style={{ objectPosition: '50% 32%' }}
+          />
+          <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-black/60 to-transparent" />
+          <h2 className="absolute bottom-5 left-5 md:bottom-7 md:left-7 text-white text-[clamp(3rem,7vw,6rem)] font-bold leading-[0.9]">
+            Nuovo
+            <br />
+            sorriso
           </h2>
-          <span className="absolute bottom-4 left-5 md:bottom-6 md:left-7 text-white md:text-black text-xs md:text-sm font-semibold z-10">
+        </div>
+
+        <div
+          style={reveal.getAnimStyle(1)}
+          className="rounded-xl md:rounded-2xl bg-stone-50 p-5 md:p-7 flex flex-col justify-between min-h-[160px] md:min-h-0"
+        >
+          <h2 className="text-2xl md:text-3xl font-bold text-black">I nostri sorrisi</h2>
+          <span className="text-xs md:text-sm font-semibold text-black">
             Il nostro lavoro di estetica dentale
           </span>
-        </MaskedCard>
+        </div>
 
-        <MaskedCard
-          {...mask}
-          position={positions[1]}
-          cardRef={setCard(1)}
-          style={reveal.getAnimStyle(1)}
-          className="md:row-span-2 rounded-xl md:rounded-2xl overflow-hidden relative min-h-[200px] md:min-h-0"
+        <div
+          style={reveal.getAnimStyle(2)}
+          className="rounded-xl md:rounded-2xl bg-zinc-200 p-5 md:p-7 flex flex-col justify-between min-h-[180px] md:min-h-0"
         >
-          <p className="absolute bottom-16 left-5 md:bottom-20 md:left-7 text-white text-xs md:text-sm font-semibold leading-4 md:leading-5 z-10 [text-shadow:0_1px_6px_rgb(0_0_0_/_0.6)]">
+          <p className="text-xs md:text-sm font-semibold text-black leading-4 md:leading-5">
             Se vuoi un sorriso che si nota,
             <br />
             chiamaci e parliamo del tuo progetto.
           </p>
           <a
-            href="tel:+390212345678"
-            className="absolute bottom-4 right-4 md:bottom-6 md:right-6 px-5 py-3 md:px-8 md:py-5 bg-white rounded-full text-black text-base md:text-xl font-bold z-10 hover:scale-105 transition-transform"
+            href={BRAND.phoneHref}
+            className="self-end px-5 py-3 md:px-8 md:py-5 bg-white rounded-full text-black text-base md:text-xl font-bold hover:scale-105 transition-transform"
           >
             Chiamaci
           </a>
-        </MaskedCard>
+        </div>
 
-        <MaskedCard
-          {...mask}
-          position={positions[2]}
-          cardRef={setCard(2)}
-          style={reveal.getAnimStyle(2)}
-          className="rounded-xl md:rounded-2xl overflow-hidden relative min-h-[160px] md:min-h-0"
-        >
-          <h2 className="absolute top-4 left-5 md:top-6 md:left-7 text-white md:text-black text-[clamp(3rem,7vw,6rem)] font-bold leading-[0.9] z-10">
-            Nuovo
-            <br />
-            sorriso
-          </h2>
-        </MaskedCard>
-
-        <MaskedCard
-          {...mask}
-          position={positions[3]}
-          cardRef={setCard(3)}
+        <div
           style={reveal.getAnimStyle(3)}
-          className="col-span-1 md:col-span-2 rounded-xl md:rounded-2xl overflow-hidden relative min-h-[200px] md:min-h-0"
+          className="col-span-1 md:col-span-2 flex flex-wrap md:flex-nowrap gap-1.5 md:gap-2 min-h-[200px] md:min-h-0"
         >
-          <div className="absolute inset-0 z-10 flex flex-wrap md:flex-nowrap gap-1.5 md:gap-2 p-2 md:p-3">
-            {services.map((svc) => (
-              <div
-                key={svc.name}
-                className={`flex-1 min-w-[calc(50%-4px)] md:min-w-0 rounded-xl md:rounded-2xl p-3 md:p-5 flex flex-col justify-between ${
-                  svc.active ? 'bg-white/90 backdrop-blur-md' : 'bg-white/20 backdrop-blur-xl'
-                }`}
-              >
-                <h3
-                  className={`text-xl md:text-4xl font-bold leading-[1.05] whitespace-pre-line ${
-                    svc.active ? 'text-black' : 'text-white'
+          {services.map((svc) => (
+            <div
+              key={svc.name}
+              className={`flex-1 min-w-[calc(50%-4px)] md:min-w-0 rounded-xl md:rounded-2xl p-3 md:p-5 flex flex-col justify-between ${
+                svc.active ? 'bg-black text-white' : 'bg-stone-100 text-black'
+              }`}
+            >
+              <h3 className="text-xl md:text-4xl font-bold leading-[1.05] whitespace-pre-line">
+                {svc.name}
+              </h3>
+              {svc.num && (
+                <span
+                  className={`self-end w-8 h-8 md:w-12 md:h-12 rounded-full border flex items-center justify-center text-xs md:text-sm font-semibold ${
+                    svc.active ? 'border-white' : 'border-black'
                   }`}
                 >
-                  {svc.name}
-                </h3>
-                {svc.num && (
-                  <span
-                    className={`self-end w-8 h-8 md:w-12 md:h-12 rounded-full border flex items-center justify-center text-xs md:text-sm font-semibold ${
-                      svc.active ? 'border-black text-black' : 'border-white text-white'
-                    }`}
-                  >
-                    {svc.num}
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-        </MaskedCard>
+                  {svc.num}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )
