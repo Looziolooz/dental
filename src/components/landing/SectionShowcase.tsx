@@ -24,10 +24,14 @@ const SHOWCASE_IMAGE = '/images/showcase.webp'
 const SHOWCASE_FOCUS = '50% 42%'
 
 /**
- * Dove finisce la linea di richiamo, in px dall'origine dell'annotazione.
- * Deve cadere su un dente: va ritarata insieme a SHOWCASE_FOCUS quando si cambia la foto.
+ * Estremi della linea di richiamo, in FRAZIONI della card (0-1), non in pixel.
+ *
+ * In pixel si rompeva due volte: a ogni cambio di foto e a ogni larghezza diversa
+ * dello schermo. In frazioni il richiamo resta sul soggetto a qualsiasi dimensione,
+ * e per una foto nuova basta rimisurare `to` — che deve cadere su un DENTE.
  */
-const LEADER_END = { x: 560, y: 70 }
+const LEADER_FROM = { x: 0.157, y: 0.298 }
+const LEADER_TO = { x: 0.662, y: 0.525 }
 
 /** Copy dimostrativa: numeri e recensioni sono di esempio, come tutto il resto della demo. */
 const REVIEW_COUNT = '2.500'
@@ -115,29 +119,47 @@ function Annotation() {
         Faccette
       </p>
 
-      {/* linea che scende verso un dente della foto */}
+    </div>
+  )
+}
+
+/**
+ * Linea di richiamo: livello a se' stante, steso su tutta la card.
+ * Il tratto usa `non-scaling-stroke` perche' il viewBox e' deformato da
+ * preserveAspectRatio="none"; il punto e il bersaglio sono div posizionati in
+ * percentuale, cosi' restano cerchi e non ellissi.
+ */
+function Leader() {
+  const pct = (v: number) => `${v * 100}%`
+
+  return (
+    <div className="absolute inset-0 hidden md:block pointer-events-none">
       <svg
-        className="absolute left-[142px] top-[112px] w-140 h-50 overflow-visible"
-        fill="none"
+        className="absolute inset-0 w-full h-full"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
         aria-hidden="true"
       >
-        <circle cx="4" cy="4" r="3.5" fill="white" />
-        <path
-          d={`M4 4 L${LEADER_END.x} ${LEADER_END.y}`}
+        <line
+          x1={LEADER_FROM.x * 100}
+          y1={LEADER_FROM.y * 100}
+          x2={LEADER_TO.x * 100}
+          y2={LEADER_TO.y * 100}
           stroke="white"
-          strokeWidth="1.25"
           strokeOpacity="0.9"
-        />
-        <circle
-          cx={LEADER_END.x}
-          cy={LEADER_END.y}
-          r="11"
-          fill="black"
-          fillOpacity="0.25"
-          stroke="white"
-          strokeWidth="2"
+          strokeWidth="1"
+          vectorEffect="non-scaling-stroke"
         />
       </svg>
+
+      <span
+        className="absolute w-2 h-2 rounded-full bg-white -translate-x-1/2 -translate-y-1/2"
+        style={{ left: pct(LEADER_FROM.x), top: pct(LEADER_FROM.y) }}
+      />
+      <span
+        className="absolute w-6 h-6 rounded-full border-2 border-white bg-black/25 -translate-x-1/2 -translate-y-1/2"
+        style={{ left: pct(LEADER_TO.x), top: pct(LEADER_TO.y) }}
+      />
     </div>
   )
 }
@@ -190,6 +212,7 @@ export default function SectionShowcase() {
         </div>
 
         <Annotation />
+        <Leader />
 
         {/* ------------------------------------------- titolo e prova sociale */}
         <div className="absolute bottom-0 inset-x-0 p-6 md:p-10 lg:p-12">

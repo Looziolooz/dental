@@ -476,8 +476,10 @@ function SectionHero() {
           style={reveal.getAnimStyle(i)}
           className="w-full h-14 md:h-20 shrink-0 rounded-xl md:rounded-2xl overflow-hidden relative"
         >
-          <span className="flex items-center justify-center h-full text-black text-lg md:text-3xl font-bold text-center relative z-10">
-            {label}
+          <span className="flex items-center justify-center h-full relative z-10">
+            <span className="px-5 md:px-8 py-1 md:py-1.5 rounded-full bg-white/85 backdrop-blur-lg text-black text-lg md:text-3xl font-bold text-center">
+              {label}
+            </span>
           </span>
         </MaskedCard>
       ))}
