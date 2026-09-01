@@ -29,12 +29,11 @@ const AVATARS = path.join(IMAGES, 'avatars')
  */
 const TARGETS = [
   {
-    name: 'hero',
+    name: 'igiene',
     minRatio: 0.4,
-    maxWidth: 2400,
-    uso: 'sfondo mosaico — sezione 1',
-    serve:
-      'Qualsiasi orientamento. Se orizzontale, il soggetto va nella META DESTRA; se verticale, in ALTO (il mosaico scorre verso il basso). Serve comunque spazio chiaro e vuoto dove cade "Cure dentali" in nero, e il soggetto deve reggere anche tagliato a fasce da 56-80px.',
+    maxWidth: 1600,
+    uso: 'sezione 3 — colonna alta',
+    serve: 'VERTICALE. Un gesto di igiene quotidiana, soggetto riconoscibile a mezzo busto.',
   },
   {
     name: 'smile-gallery',
@@ -71,7 +70,7 @@ const TARGETS = [
 /** Da quali foto si ricavano gli avatar della prova sociale. */
 const AVATAR_SOURCES = [
   ['smile', 'smile-gallery'],
-  ['hero', 'hero'],
+  ['igiene', 'igiene'],
   ['showcase', 'showcase'],
 ]
 

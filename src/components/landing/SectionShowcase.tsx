@@ -49,7 +49,7 @@ const CARD_LINKS = [
  */
 const AVATARS = [
   '/images/avatars/smile.webp',
-  '/images/avatars/hero.webp',
+  '/images/avatars/igiene.webp',
   '/images/avatars/showcase.webp',
 ]
 

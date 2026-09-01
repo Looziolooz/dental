@@ -19,7 +19,6 @@ import SectionShowcase from './SectionShowcase'
 
 /* ------------------------------------------------------------------ asset */
 // Serviti da /public: nessuna dipendenza da CDN di terzi.
-const HERO_IMAGE = '/images/hero.webp'
 const SECTION2_IMAGE = '/images/smile-gallery.webp'
 const SECTION3_IMG1 = '/images/implant-1.webp'
 const SECTION3_IMG2 = '/images/implant-2.webp'
@@ -29,10 +28,8 @@ const HERO_VIDEO_POSTER = '/video/studio-poster.webp'
 
 /**
  * Quanto scendere nella foto quando e' VERTICALE (0 = bordo alto, 1 = bordo basso).
- * Con un ritratto in piedi il volto sta in alto: valori bassi lo tengono nelle
- * tre barre. Ignorato del tutto sulle foto orizzontali.
+ * Usato dal mosaico della sezione 2; ignorato sulle foto orizzontali.
  */
-const HERO_FOCAL_Y = 0.12
 const SECTION2_FOCAL_Y = 0.33
 
 /* ------------------------------------------------------------------- dati */
@@ -438,88 +435,59 @@ function Navbar() {
 /* --------------------------------------------------------------- SECTION 1 */
 
 function SectionHero() {
-  const sectionRef = useRef<HTMLElement | null>(null)
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([])
   const reveal = useStaggeredReveal()
-  const isMobile = useIsMobile()
-
-  const positions = useMaskPositions(sectionRef, cardsRef)
-  const fit = useMaskFit(
-    HERO_IMAGE,
-    positions[0]?.sw ?? 0,
-    positions[0]?.sh ?? 0,
-    isMobile ? 0.7 : 0.8,
-    HERO_FOCAL_Y,
-  )
-
-  const setRefs = (el: HTMLElement | null) => {
-    sectionRef.current = el
-    reveal.containerRef.current = el
-  }
-  const setCard = (i: number) => (el: HTMLDivElement | null) => {
-    cardsRef.current[i] = el
-  }
-
-  const mask = { bgImage: HERO_IMAGE, fit }
 
   return (
     <section
       id="home"
-      ref={setRefs}
+      ref={(el) => {
+        reveal.containerRef.current = el
+      }}
       className="h-screen w-full overflow-hidden flex flex-col pt-24 md:pt-24 px-3 md:px-5 pb-1.5 md:pb-2 gap-1.5 md:gap-2"
     >
       {featureBars.map((label, i) => (
-        <MaskedCard
+        <div
           key={label}
-          {...mask}
-          position={positions[i]}
-          cardRef={setCard(i)}
           style={reveal.getAnimStyle(i)}
-          className="w-full h-14 md:h-20 shrink-0 rounded-xl md:rounded-2xl overflow-hidden relative"
+          className="w-full h-14 md:h-20 shrink-0 rounded-xl md:rounded-2xl bg-stone-100 flex items-center justify-center"
         >
-          <span className="flex items-center justify-center h-full relative z-10">
-            <span className="px-5 md:px-8 py-1 md:py-1.5 rounded-full bg-white/85 backdrop-blur-lg text-black text-lg md:text-3xl font-bold text-center">
-              {label}
-            </span>
-          </span>
-        </MaskedCard>
+          <span className="text-black text-lg md:text-3xl font-bold text-center">{label}</span>
+        </div>
       ))}
 
       <div className="w-full flex-1 min-h-0 flex gap-1.5 md:gap-2">
-        <MaskedCard
-          {...mask}
-          position={positions[3]}
-          cardRef={setCard(3)}
+        <div
           style={reveal.getAnimStyle(3)}
-          className="flex-1 min-w-0 rounded-xl md:rounded-2xl overflow-hidden relative"
+          className="flex-1 min-w-0 rounded-xl md:rounded-2xl bg-stone-50 relative overflow-hidden"
         >
-          <p className="absolute top-4 left-4 md:top-7 md:left-7 text-black text-xs md:text-sm font-semibold leading-4 md:leading-5 max-w-[200px] md:max-w-[300px] z-10">
+          <p className="absolute top-4 left-4 md:top-7 md:left-7 text-black text-xs md:text-sm font-semibold leading-4 md:leading-5 max-w-[200px] md:max-w-[300px]">
             Cure odontoiatriche professionali,
             <br />
             con la tecnologia di oggi
           </p>
 
-          <div className="absolute bottom-5 left-3 md:bottom-8 md:left-4 z-10">
+          <div className="absolute bottom-5 left-3 md:bottom-8 md:left-4">
             <span className="block text-black text-xs md:text-sm font-semibold mb-1 md:mb-2">
               {BRAND.claim}
             </span>
-            <h1 className="text-black text-[clamp(3rem,9vw,8rem)] font-bold leading-[0.79] tracking-tight">
+            <h1 className="text-black text-[clamp(3rem,10vw,10rem)] font-bold leading-[0.79] tracking-tight">
               Cure
               <br />
               dentali
             </h1>
           </div>
 
-          <span className="absolute bottom-6 right-4 md:bottom-10 md:right-8 text-white text-xs md:text-sm font-semibold z-10 [text-shadow:0_1px_6px_rgb(0_0_0_/_0.6)]">
+          <span className="absolute bottom-6 right-4 md:bottom-10 md:right-8 text-black text-xs md:text-sm font-semibold">
             Prima visita gratuita
           </span>
-        </MaskedCard>
+        </div>
 
         {/* Colonna video: i 9:16 dei generatori ci stanno senza ritagli.
-            Nascosta sotto md, dove l'hero e' gia' pieno per l'altezza. */}
+            Senza foto di sfondo e' l'unica immagine della sezione, quindi porta
+            tutto il peso visivo. Nascosta sotto md, dove l'hero e' gia' pieno. */}
         <div
           style={reveal.getAnimStyle(3)}
-          className="hidden md:block w-[24%] shrink-0 rounded-2xl overflow-hidden relative"
+          className="hidden md:block w-[30%] shrink-0 rounded-2xl overflow-hidden relative"
         >
           <LoopingVideo
             src={HERO_VIDEO}
