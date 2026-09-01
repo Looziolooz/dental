@@ -1,0 +1,49 @@
+{
+  "name": "dentista",
+  "version": "0.1.0",
+  "description": "Demo clinica dentale — landing, prenotazioni, calendario admin e pagamenti (Next.js + Payload)",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
+    "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev",
+    "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
+    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "seed": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import=tsx/esm src/seed/run.ts",
+    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
+    "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
+    "images": "node scripts/images.mjs"
+  },
+  "dependencies": {
+    "@payloadcms/db-sqlite": "3.88.0",
+    "@payloadcms/next": "3.88.0",
+    "@payloadcms/richtext-lexical": "3.88.0",
+    "@payloadcms/ui": "3.88.0",
+    "cross-env": "^7.0.3",
+    "date-fns": "^4.4.0",
+    "graphql": "^16.8.1",
+    "next": "16.3.0",
+    "payload": "3.88.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "sharp": "0.34.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "22.19.9",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "eslint": "^9.16.0",
+    "eslint-config-next": "16.3.0",
+    "prettier": "^3.4.2",
+    "sass": "^1.103.1",
+    "tailwindcss": "^4.3.3",
+    "tsx": "4.22.4",
+    "typescript": "5.7.3"
+  },
+  "engines": {
+    "node": "^18.20.2 || >=20.9.0"
+  }
+}
