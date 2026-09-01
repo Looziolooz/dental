@@ -23,8 +23,9 @@ const HERO_IMAGE = '/images/hero.webp'
 const SECTION2_IMAGE = '/images/smile-gallery.webp'
 const SECTION3_IMG1 = '/images/implant-1.webp'
 const SECTION3_IMG2 = '/images/implant-2.webp'
-const SECTION3_VIDEO = '/video/studio.mp4'
-const SECTION3_VIDEO_POSTER = '/video/studio-poster.webp'
+const SECTION3_IMG3 = '/images/igiene.webp'
+const HERO_VIDEO = '/video/studio.mp4'
+const HERO_VIDEO_POSTER = '/video/studio-poster.webp'
 
 /**
  * Quanto scendere nella foto quando e' VERTICALE (0 = bordo alto, 1 = bordo basso).
@@ -484,34 +485,50 @@ function SectionHero() {
         </MaskedCard>
       ))}
 
-      <MaskedCard
-        {...mask}
-        position={positions[3]}
-        cardRef={setCard(3)}
-        style={reveal.getAnimStyle(3)}
-        className="w-full flex-1 min-h-0 rounded-xl md:rounded-2xl overflow-hidden relative"
-      >
-        <p className="absolute top-4 left-4 md:top-7 md:left-7 text-black text-xs md:text-sm font-semibold leading-4 md:leading-5 max-w-[200px] md:max-w-[300px] z-10">
-          Cure odontoiatriche professionali,
-          <br />
-          con la tecnologia di oggi
-        </p>
-
-        <div className="absolute bottom-5 left-3 md:bottom-8 md:left-4 z-10">
-          <span className="block text-black text-xs md:text-sm font-semibold mb-1 md:mb-2">
-            {BRAND.claim}
-          </span>
-          <h1 className="text-black text-[clamp(3rem,11vw,11rem)] font-bold leading-[0.79] tracking-tight">
-            Cure
+      <div className="w-full flex-1 min-h-0 flex gap-1.5 md:gap-2">
+        <MaskedCard
+          {...mask}
+          position={positions[3]}
+          cardRef={setCard(3)}
+          style={reveal.getAnimStyle(3)}
+          className="flex-1 min-w-0 rounded-xl md:rounded-2xl overflow-hidden relative"
+        >
+          <p className="absolute top-4 left-4 md:top-7 md:left-7 text-black text-xs md:text-sm font-semibold leading-4 md:leading-5 max-w-[200px] md:max-w-[300px] z-10">
+            Cure odontoiatriche professionali,
             <br />
-            dentali
-          </h1>
-        </div>
+            con la tecnologia di oggi
+          </p>
 
-        <span className="absolute bottom-6 right-4 md:bottom-10 md:right-8 text-white text-xs md:text-sm font-semibold z-10 [text-shadow:0_1px_6px_rgb(0_0_0_/_0.6)]">
-          Prima visita gratuita
-        </span>
-      </MaskedCard>
+          <div className="absolute bottom-5 left-3 md:bottom-8 md:left-4 z-10">
+            <span className="block text-black text-xs md:text-sm font-semibold mb-1 md:mb-2">
+              {BRAND.claim}
+            </span>
+            <h1 className="text-black text-[clamp(3rem,9vw,8rem)] font-bold leading-[0.79] tracking-tight">
+              Cure
+              <br />
+              dentali
+            </h1>
+          </div>
+
+          <span className="absolute bottom-6 right-4 md:bottom-10 md:right-8 text-white text-xs md:text-sm font-semibold z-10 [text-shadow:0_1px_6px_rgb(0_0_0_/_0.6)]">
+            Prima visita gratuita
+          </span>
+        </MaskedCard>
+
+        {/* Colonna video: i 9:16 dei generatori ci stanno senza ritagli.
+            Nascosta sotto md, dove l'hero e' gia' pieno per l'altezza. */}
+        <div
+          style={reveal.getAnimStyle(3)}
+          className="hidden md:block w-[24%] shrink-0 rounded-2xl overflow-hidden relative"
+        >
+          <LoopingVideo
+            src={HERO_VIDEO}
+            poster={HERO_VIDEO_POSTER}
+            label="Una visita nello studio"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </div>
     </section>
   )
 }
@@ -739,10 +756,10 @@ function SectionImplants() {
           className="rounded-xl md:rounded-2xl overflow-hidden relative min-h-[350px] md:min-h-0"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <LoopingVideo
-            src={SECTION3_VIDEO}
-            poster={SECTION3_VIDEO_POSTER}
-            label="Una visita nello studio"
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={SECTION3_IMG3}
+            alt="Spazzolino sonico durante l'igiene quotidiana"
             className="w-full h-full object-cover"
           />
 

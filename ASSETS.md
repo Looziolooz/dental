@@ -13,16 +13,21 @@ disco locale ma sono escluse dal repo: 17 MB che non servono ne' al build ne' al
 | File | Soggetto | Dove | Data |
 |---|---|---|---|
 | `public/images/hero.webp` | Ritratto in piedi, camicia senape, fondo neutro | sfondo mosaico sezione 1 | 2026-09-01 |
+| `public/images/igiene.webp` | Spazzolino sonico in uso, camicia senape | sezione 3, colonna alta | 2026-09-01 |
 | `public/images/smile-gallery.webp` | Piano medio, interno studio caldo | sfondo mosaico sezione 2 | 2026-09-01 |
 | `public/images/implant-1.webp` | Kit strumenti **AURA DENTAL** | sezione 3, riquadro sinistro | 2026-09-01 |
 | `public/images/implant-2.webp` | Spazzolino sonico su marmo | sezione 3, riquadro destro | 2026-09-01 |
 | `public/images/showcase.webp` | Visita con specchietto, bocca aperta | card di chiusura | 2026-09-01 |
-| `public/video/studio.mp4` | Visita in studio, 8s muto in loop | sezione 3, colonna alta | 2026-09-01 |
+| `public/video/studio.mp4` | Visita in studio, 8s muto in loop | **hero, colonna laterale** (nascosta sotto md) | 2026-09-01 |
 | `public/video/igiene.mp4` | Spazzolino in bagno, 8s | **non usato**, disponibile | 2026-09-01 |
 
 Licenza: generati per questo progetto tramite Pomelli sull'account del committente.
 
 ### Tre cose da sapere
+
+**Il mosaico vuole inquadrature larghe.** Scala la foto sulla larghezza della sezione e ne mostra
+circa un terzo in verticale. Su una figura intera quel terzo e' testa e spalle e funziona; su un
+primo piano sono gli occhi, ed e' inutilizzabile. Verificato due volte, con due foto diverse.
 
 **La risoluzione e' il limite.** Pomelli esporta a 768px di larghezza. Il mosaico scala le foto a
 1440px, quasi 2x: sono state ingrandite con `lanczos3` piu' `sharpen`, ma su schermi grandi la
