@@ -20,29 +20,29 @@ const DROP = path.join(IMAGES, '_nuove')
 const AVATARS = path.join(IMAGES, 'avatars')
 
 /**
- * `minRatio` esiste solo per i due sfondi del mosaico.
+ * `minRatio` e' il rapporto minimo largo/alto accettato per ogni destinazione.
  *
- * MaskedCard scala l'immagine all'ALTEZZA della sezione (`backgroundSize: auto <h>px`,
- * `no-repeat`). Se la foto è verticale, alla stessa altezza risulta molto più stretta
- * dello schermo e resta una fascia vuota a destra. Serve che, scalata all'altezza della
- * sezione, sia almeno larga quanto il viewport: da qui il rapporto minimo 1.75:1.
+ * I due sfondi del mosaico ora accettano qualsiasi orientamento: `useMaskFit` sceglie
+ * da solo se scalare sull'altezza e scorrere in orizzontale (foto larghe) o scalare
+ * sulla larghezza e scorrere in verticale (foto strette). Restano soglie basse solo
+ * per fermare i formati assurdi, che nessun ritaglio salverebbe.
  */
 const TARGETS = [
   {
     name: 'hero',
-    minRatio: 1.75,
+    minRatio: 0.4,
     maxWidth: 2400,
     uso: 'sfondo mosaico — sezione 1',
     serve:
-      'Orizzontale 16:9. Soggetto nella METÀ DESTRA, a sinistra spazio chiaro e vuoto: ci va sopra "Cure dentali" in nero. Le tre barre in alto ne mostrano strisce da 56-80px, quindi il soggetto deve reggere anche tagliato a fasce.',
+      'Qualsiasi orientamento. Se orizzontale, il soggetto va nella META DESTRA; se verticale, in ALTO (il mosaico scorre verso il basso). Serve comunque spazio chiaro e vuoto dove cade "Cure dentali" in nero, e il soggetto deve reggere anche tagliato a fasce da 56-80px.',
   },
   {
     name: 'smile-gallery',
-    minRatio: 1.75,
+    minRatio: 0.4,
     maxWidth: 2400,
     uso: 'sfondo mosaico — sezione 2',
     serve:
-      'Orizzontale 16:9. Soggetto a destra, fondo chiaro uniforme. Le card in vetro ci stanno sopra: niente dettagli importanti nella metà sinistra.',
+      'Qualsiasi orientamento, fondo chiaro uniforme. Le card in vetro ci stanno sopra: niente dettagli importanti dove cadono.',
   },
   {
     name: 'implant-1',
@@ -59,12 +59,12 @@ const TARGETS = [
     serve: 'Quadrata. Render o macro di una vite implantare, stessa palette di implant-1.',
   },
   {
-    name: 'patient',
+    name: 'showcase',
     minRatio: 0.45,
     maxWidth: 1600,
-    uso: 'sezione 3 (colonna alta) + card di chiusura',
+    uso: 'card di chiusura',
     serve:
-      'VERTICALE, ritratto 2:3. Sorriso aperto e denti visibili: la card di chiusura ne ritaglia una fascia attorno alla bocca.',
+      'VERTICALE, ritratto 2:3. Sorriso aperto e denti visibili: la card ne ritaglia una fascia attorno alla bocca, e la linea di richiamo deve poter cadere su un dente.',
   },
 ]
 
@@ -72,7 +72,7 @@ const TARGETS = [
 const AVATAR_SOURCES = [
   ['smile', 'smile-gallery'],
   ['hero', 'hero'],
-  ['patient', 'patient'],
+  ['showcase', 'showcase'],
 ]
 
 const EXTS = ['.jpg', '.jpeg', '.png', '.webp', '.jfif', '.avif']
@@ -99,7 +99,7 @@ function printSpec() {
     const vincolo =
       t.minRatio >= 1.75
         ? red(`orizzontale, almeno ${t.minRatio}:1`)
-        : dim(`rapporto minimo ${t.minRatio}:1`)
+        : dim(`qualsiasi orientamento (minimo ${t.minRatio}:1)`)
     console.log(`  ${bold(t.name)}  ${dim('— ' + t.uso)}`)
     console.log(`    ${vincolo}`)
     console.log(`    ${t.serve}\n`)
@@ -134,7 +134,7 @@ async function run() {
       console.log(
         `   Serve almeno ${t.minRatio}:1. ` +
           (t.minRatio >= 1.75
-            ? 'Più stretta di così lascia una fascia vuota a destra nel mosaico.'
+            ? 'Troppo stretta anche per il mosaico a scorrimento verticale.'
             : 'Il ritaglio taglierebbe via il soggetto.'),
       )
       console.log(dim(`   ${t.serve}\n`))

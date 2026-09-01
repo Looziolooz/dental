@@ -8,3 +8,8 @@ media/
 *.db-journal
 *.tsbuildinfo
 .gstack/
+
+# Sorgenti originali Pomelli: 17MB che non servono ne' al repo ne' al deploy.
+# Gli asset usati sono i .webp/.mp4 gia' processati in public/images e public/video.
+public/images/_nuove/*
+!public/images/_nuove/.gitkeep

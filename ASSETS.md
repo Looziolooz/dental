@@ -3,28 +3,48 @@
 Tutti gli asset sono serviti da `public/`. **Nessun URL esterno nel codice**: se un CDN di terzi
 sparisce, il sito non cambia di una virgola.
 
-## Stato attuale: ⚠️ asset provvisori da sostituire
+## Inventario
 
-Le cinque immagini vengono dallo spec di partenza (MotionSites / Higgsfield). Sono state
-**scaricate in locale** invece di essere linkate ai CDN `images.higgs.ai` / `d8j0ntlcm91z4.cloudfront.net`,
-così il sito regge anche se quei CDN smettono di servire. Resta però imagery di terzi con
-**licenza non verificata**: vanno rigenerate prima di qualsiasi uso reale con un cliente.
+Generati con **Pomelli** (Google Labs) a partire dal sito online: Pomelli ha letto
+`dental-mu-inky.vercel.app`, ne ha ricavato il brand e ha prodotto foto e video gia' marchiati.
+Le sorgenti originali (768x1365 le foto, 720x1280 i video) restano in `public/images/_nuove/` sul
+disco locale ma sono escluse dal repo: 17 MB che non servono ne' al build ne' al deploy.
 
-| File | Sorgente | Prompt / soggetto | Data | Licenza |
-|---|---|---|---|---|
-| `public/images/hero.webp` | Spec MotionSites (CDN Higgsfield) | Ritratto donna che sorride e strizza l'occhio, maglione rosso, occhiali in mano, fondo chiaro | 2026-09-01 | ⚠️ **non verificata** — provvisorio |
-| `public/images/smile-gallery.webp` | Spec MotionSites (CDN Higgsfield) | Ritratto donna sorridente, top giallo senape, fondo chiaro | 2026-09-01 | ⚠️ **non verificata** — provvisorio |
-| `public/images/implant-1.webp` | Spec MotionSites (CDN Higgsfield) | Render 3D corona dentale sopra vite implantare, fondo azzurro | 2026-09-01 | ⚠️ **non verificata** — provvisorio |
-| `public/images/implant-2.webp` | Spec MotionSites (CDN Higgsfield) | Render 3D impianto avvitato nella gengiva fra due denti, fondo azzurro | 2026-09-01 | ⚠️ **non verificata** — provvisorio |
-| `public/images/patient.webp` | Spec MotionSites (CDN Higgsfield) | Ritratto donna bionda che ride, maglione azzurro | 2026-09-01 | ⚠️ **non verificata** — provvisorio |
+| File | Soggetto | Dove | Data |
+|---|---|---|---|
+| `public/images/hero.webp` | Ritratto in piedi, camicia senape, fondo neutro | sfondo mosaico sezione 1 | 2026-09-01 |
+| `public/images/smile-gallery.webp` | Piano medio, interno studio caldo | sfondo mosaico sezione 2 | 2026-09-01 |
+| `public/images/implant-1.webp` | Kit strumenti **AURA DENTAL** | sezione 3, riquadro sinistro | 2026-09-01 |
+| `public/images/implant-2.webp` | Spazzolino sonico su marmo | sezione 3, riquadro destro | 2026-09-01 |
+| `public/images/showcase.webp` | Visita con specchietto, bocca aperta | card di chiusura | 2026-09-01 |
+| `public/video/studio.mp4` | Visita in studio, 8s muto in loop | sezione 3, colonna alta | 2026-09-01 |
+| `public/video/igiene.mp4` | Spazzolino in bagno, 8s | **non usato**, disponibile | 2026-09-01 |
+
+Licenza: generati per questo progetto tramite Pomelli sull'account del committente.
+
+### Tre cose da sapere
+
+**La risoluzione e' il limite.** Pomelli esporta a 768px di larghezza. Il mosaico scala le foto a
+1440px, quasi 2x: sono state ingrandite con `lanczos3` piu' `sharpen`, ma su schermi grandi la
+morbidezza si vede. Se Pomelli permette un export piu' grande, vale la pena rifarle.
+
+**Il marchio nelle foto non e' uniforme.** Pomelli ha prodotto sia "Studio Aurora" sia
+"AURA DENTAL". Il sito e' stato allineato al secondo (vedi `src/lib/brand.ts`), e per i due
+riquadri prodotto sono state scelte le immagini compatibili. Le scartate restano in `_nuove/`.
+
+**I video sono ricodificati.** Gli originali pesano ~1,9 MB ciascuno; `ffmpeg` a 540x960 CRF 30
+senza audio li porta a ~280 KB, con `+faststart` per l'avvio progressivo. Ogni video ha un poster
+`.webp`: `LoopingVideo` parte dal poster e passa al video solo se l'utente non ha chiesto
+`prefers-reduced-motion: reduce`.
 
 ### Avatar della prova sociale
 
+
 | File | Sorgente | Come | Data | Licenza |
 |---|---|---|---|---|
-| `public/images/avatars/smile.webp` | `smile-gallery.webp` | `npm run images` | 2026-09-01 | eredita l'originale ⚠️ |
-| `public/images/avatars/hero.webp` | `hero.webp` | `npm run images` | 2026-09-01 | eredita l'originale ⚠️ |
-| `public/images/avatars/patient.webp` | `patient.webp` | `npm run images` | 2026-09-01 | eredita l'originale ⚠️ |
+| `public/images/avatars/smile.webp` | `smile-gallery.webp` | `npm run images` | 2026-09-01 | eredita l'originale |
+| `public/images/avatars/hero.webp` | `hero.webp` | `npm run images` | 2026-09-01 | eredita l'originale |
+| `public/images/avatars/showcase.webp` | `showcase.webp` | `npm run images` | 2026-09-01 | eredita l'originale |
 
 Vanno pre-ritagliati e non ottenuti con `object-position`: le foto sorgente sono panoramiche, e
 dentro un cerchio da 44px `object-cover` mostrerebbe l'intera altezza del fotogramma (maglione

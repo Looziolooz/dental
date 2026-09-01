@@ -9,10 +9,10 @@ import type { Payload } from 'payload'
 import config from '../payload.config.js'
 import { SERVICES_CONTENT } from './services-content.js'
 
-const ADMIN_EMAIL = 'admin@studioaurora.it'
+const ADMIN_EMAIL = 'admin@auradental.it'
 const ADMIN_PASSWORD = 'demo1234'
-/** Email usata prima del cambio di brand: se la trovo, la rinomino invece di creare un doppione. */
-const LEGACY_ADMIN_EMAIL = 'admin@dentalhealth.it'
+/** Email dei brand precedenti: se ne trovo una la rinomino, invece di creare un doppione. */
+const LEGACY_ADMIN_EMAILS = ['admin@dentalhealth.it', 'admin@studioaurora.it']
 
 const DENTISTS = [
   { name: 'Dott.ssa Elena Ferri', role: 'Implantologia e chirurgia', color: 'indigo' },
@@ -87,14 +87,15 @@ const seed = async () => {
 
   const existing = await payload.find({
     collection: 'users',
-    where: { email: { in: [ADMIN_EMAIL, LEGACY_ADMIN_EMAIL] } },
+    where: { email: { in: [ADMIN_EMAIL, ...LEGACY_ADMIN_EMAILS] } },
     limit: 1,
   })
   if (existing.totalDocs > 0) {
     const admin = existing.docs[0]
-    if (admin.email === LEGACY_ADMIN_EMAIL) {
+    if (admin.email !== ADMIN_EMAIL) {
+      const previous = admin.email
       await payload.update({ collection: 'users', id: admin.id, data: { email: ADMIN_EMAIL } })
-      payload.logger.info(`Admin rinominato: ${LEGACY_ADMIN_EMAIL} -> ${ADMIN_EMAIL}`)
+      payload.logger.info(`Admin rinominato: ${previous} -> ${ADMIN_EMAIL}`)
     }
     const updated = await applyServiceContent(payload)
     payload.logger.info(

@@ -7,16 +7,16 @@
  */
 export const BRAND = {
   /** Le due righe del logo, impilate stretto. Tienile di lunghezza simile. */
-  logoTop: 'Studio',
-  logoBottom: 'Aurora',
+  logoTop: 'Aura',
+  logoBottom: 'Dental',
   /** Nome esteso, per i titoli delle pagine. */
-  name: 'Studio Aurora',
+  name: 'Aura Dental',
   tagline: 'odontoiatria e igiene',
   claim: 'Studio dentistico a Milano',
   city: 'Milano',
   phone: '+39 02 1234 5678',
   phoneHref: 'tel:+390212345678',
-  email: 'info@studioaurora.it',
+  email: 'info@auradental.it',
   hours: 'Lun–Ven 09:00–18:00',
 } as const
 

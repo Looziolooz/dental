@@ -18,7 +18,7 @@ import { BRAND } from '@/lib/brand'
  * verticale ad alta risoluzione: il ritaglio prende una fascia attorno alla bocca.
  * Sostituendo questo file cambia la sezione, senza toccare il resto.
  */
-const SHOWCASE_IMAGE = '/images/patient.webp'
+const SHOWCASE_IMAGE = '/images/showcase.webp'
 
 /** Punto della foto tenuto al centro del ritaglio: x=50% (volto), y=42% (bocca). */
 const SHOWCASE_FOCUS = '50% 42%'
@@ -46,7 +46,7 @@ const CARD_LINKS = [
 const AVATARS = [
   '/images/avatars/smile.webp',
   '/images/avatars/hero.webp',
-  '/images/avatars/patient.webp',
+  '/images/avatars/showcase.webp',
 ]
 
 /* ------------------------------------------------------------------ icone */
