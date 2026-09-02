@@ -58,7 +58,7 @@ export default function BookingWizard({
   if (result?.ok) {
     return (
       <div className="rounded-2xl bg-black text-white p-8 md:p-12 flex flex-col gap-5">
-        <span className="text-xs font-semibold uppercase tracking-wide text-white/60">
+        <span className="text-xs font-semibold text-white/60">
           Richiesta ricevuta
         </span>
         <h2 className="text-4xl md:text-6xl font-bold leading-[0.95]">

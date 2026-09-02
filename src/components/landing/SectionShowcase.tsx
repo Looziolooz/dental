@@ -33,13 +33,13 @@ const SHOWCASE_FOCUS = '50% 42%'
 const LEADER_FROM = { x: 0.157, y: 0.298 }
 const LEADER_TO = { x: 0.662, y: 0.525 }
 
-/** Copy dimostrativa: numeri e recensioni sono di esempio, come tutto il resto della demo. */
+/** Copy dimostrativa: il numero e' di esempio, e la label sotto lo dichiara nel punto stesso. */
 const REVIEW_COUNT = '2.500'
 
 const CARD_LINKS = [
   { label: 'Impianti', href: '/servizi/impianto' },
   { label: 'Prevenzione', href: '/servizi/igiene' },
-  { label: 'Prezzi', href: '/servizi' },
+  { label: 'Prezzi', href: '/prezzi' },
 ]
 
 /**
@@ -248,7 +248,7 @@ export default function SectionShowcase() {
                     ))}
                   </span>
                 </div>
-                <p className="text-sm font-semibold leading-none mt-0.5">Recensioni</p>
+                <p className="text-sm font-semibold leading-none mt-0.5">Recensioni d’esempio</p>
               </div>
             </div>
           </div>

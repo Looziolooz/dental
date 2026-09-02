@@ -1,5 +1,43 @@
 @import 'tailwindcss';
 
+/* Open Sauce One (SIL OFL), self-hostato in public/fonts: il sito non dipende
+   da nessun CDN di terzi. Cinque pesi, gli stessi usati dalle utility Tailwind. */
+@font-face {
+  font-family: 'Open Sauce One';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/OpenSauceOne-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Open Sauce One';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/OpenSauceOne-Medium.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Open Sauce One';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/OpenSauceOne-SemiBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Open Sauce One';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/OpenSauceOne-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Open Sauce One';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/OpenSauceOne-ExtraBold.woff2') format('woff2');
+}
+
 @layer base {
   html,
   body {
@@ -15,6 +53,20 @@
   }
 }
 
+
+/* L'accento pesca della card di chiusura torna nella selezione del testo:
+   un dettaglio che lega le pagine senza aggiungere colore all'impianto. */
+::selection {
+  background: #f6e3d5;
+  color: #000;
+}
+
+/* Tastiera: anello nero netto, coerente con i bordi dei bottoni. */
+:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
 
 /* La navbar della landing e' fissa: senza questo, un salto ad ancora
    finirebbe sotto la barra. */

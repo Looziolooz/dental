@@ -14,6 +14,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 
 import { BRAND } from '@/lib/brand'
+import { SiteFooter } from '@/components/site/SiteChrome'
 
 import SectionShowcase from './SectionShowcase'
 
@@ -29,18 +30,18 @@ const HERO_VIDEO_POSTER = '/video/studio-poster.webp'
 /* ------------------------------------------------------------------- dati */
 // I nomi vanno su due righe: il \n e' reso da whitespace-pre-line.
 const services = [
-  { name: 'Faccette\ndentali', num: '01', active: true },
-  { name: 'Corone\ndentali', num: '02', active: false },
-  { name: 'Sbiancamento\ndentale', num: '03', active: false },
-  { name: 'Impianti\ndentali', num: null, active: false },
+  { name: 'Faccette\ndentali', num: '01', active: true, href: '/servizi/faccette' },
+  { name: 'Corone\ndentali', num: '02', active: false, href: '/servizi/corona' },
+  { name: 'Sbiancamento\ndentale', num: '03', active: false, href: '/servizi/sbiancamento' },
+  { name: 'Impianti\ndentali', num: null, active: false, href: '/servizi/impianto' },
 ]
 
 const navLinks = [
   { label: 'Home', href: '/#home' },
   { label: 'Servizi', href: '/servizi' },
-  { label: 'Lo studio', href: '/#implants' },
-  { label: 'Galleria', href: '/#gallery' },
-  { label: 'Contatti', href: '/prenota' },
+  { label: 'Lo studio', href: '/studio' },
+  { label: 'Prezzi', href: '/prezzi' },
+  { label: 'Contatti', href: '/contatti' },
 ]
 
 /* ------------------------------------------------------------------- hook */
@@ -198,7 +199,9 @@ function Navbar() {
             >
               Menu
             </button>
-            <a href="tel:+390212345678" className="text-sm font-semibold text-black">Urgenze</a>
+            {/* Non tel:: visibile solo da md in su, dove il protocollo telefono apre
+                il dialogo "Scegli un'app". Il numero cliccabile sta su /contatti. */}
+            <a href="/contatti#urgenze" className="text-sm font-semibold text-black">Urgenze</a>
           </div>
         </div>
 
@@ -287,11 +290,11 @@ function SectionHero() {
       ref={(el) => {
         reveal.containerRef.current = el
       }}
-      className="h-screen w-full overflow-hidden flex pt-24 md:pt-24 px-3 md:px-5 pb-1.5 md:pb-2 gap-1.5 md:gap-2"
+      className="h-screen w-full overflow-hidden flex flex-col md:flex-row pt-24 px-3 md:px-5 pb-1.5 md:pb-2 gap-1.5 md:gap-2"
     >
       <div
         style={reveal.getAnimStyle(0)}
-        className="flex-1 min-w-0 rounded-xl md:rounded-2xl bg-stone-50 relative overflow-hidden"
+        className="flex-1 min-w-0 min-h-0 rounded-xl md:rounded-2xl bg-stone-50 relative overflow-hidden"
       >
         <p className="absolute top-5 left-5 md:top-8 md:left-8 text-black text-xs md:text-sm font-semibold leading-4 md:leading-5 max-w-[220px] md:max-w-[320px]">
           Cure odontoiatriche professionali,
@@ -316,11 +319,11 @@ function SectionHero() {
       </div>
 
       {/* Colonna video: i 9:16 dei generatori ci stanno senza ritagli, ed e'
-          l'unica immagine della sezione. Nascosta sotto md, dove l'hero e'
-          gia' pieno per l'altezza. */}
+          l'unica immagine della sezione. Sotto md scende sotto il testo come
+          fascia piena: senza, il primo schermo mobile restava quasi vuoto. */}
       <div
         style={reveal.getAnimStyle(1)}
-        className="hidden md:block w-[30%] shrink-0 rounded-2xl overflow-hidden relative"
+        className="h-[38%] md:h-auto w-full md:w-[30%] shrink-0 rounded-xl md:rounded-2xl overflow-hidden relative"
       >
         <LoopingVideo
           src={HERO_VIDEO}
@@ -399,25 +402,26 @@ function SectionGallery() {
           className="col-span-1 md:col-span-2 flex flex-wrap md:flex-nowrap gap-1.5 md:gap-2 min-h-[200px] md:min-h-0"
         >
           {services.map((svc) => (
-            <div
+            <a
               key={svc.name}
-              className={`flex-1 min-w-[calc(50%-4px)] md:min-w-0 rounded-xl md:rounded-2xl p-3 md:p-5 flex flex-col justify-between ${
-                svc.active ? 'bg-black text-white' : 'bg-stone-100 text-black'
+              href={svc.href}
+              className={`flex-1 min-w-[calc(50%-4px)] md:min-w-0 rounded-xl md:rounded-2xl p-3 md:p-5 flex flex-col justify-between transition-colors duration-300 ${
+                svc.active
+                  ? 'bg-black text-white hover:bg-neutral-800'
+                  : 'bg-stone-100 text-black hover:bg-stone-200'
               }`}
             >
               <h3 className="text-xl md:text-4xl font-bold leading-[1.05] whitespace-pre-line">
                 {svc.name}
               </h3>
-              {svc.num && (
-                <span
-                  className={`self-end w-8 h-8 md:w-12 md:h-12 rounded-full border flex items-center justify-center text-xs md:text-sm font-semibold ${
-                    svc.active ? 'border-white' : 'border-black'
-                  }`}
-                >
-                  {svc.num}
-                </span>
-              )}
-            </div>
+              <span
+                className={`self-end w-8 h-8 md:w-12 md:h-12 rounded-full border flex items-center justify-center text-xs md:text-sm font-semibold ${
+                  svc.active ? 'border-white' : 'border-black'
+                }`}
+              >
+                {svc.num ?? <ArrowIcon />}
+              </span>
+            </a>
           ))}
         </div>
       </div>
@@ -536,7 +540,10 @@ function SectionImplants() {
           <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-black/55 to-transparent pointer-events-none" />
 
           <div className="absolute bottom-3 left-3 right-3 md:bottom-5 md:left-5 md:right-5 flex gap-1.5 md:gap-2">
-            <div className="flex-1 bg-white rounded-xl md:rounded-2xl p-3 md:p-5 flex flex-col justify-between h-36 md:h-52">
+            <a
+              href="/servizi/prima-visita"
+              className="group flex-1 bg-white rounded-xl md:rounded-2xl p-3 md:p-5 flex flex-col justify-between h-36 md:h-52"
+            >
               <h4 className="text-lg md:text-2xl font-bold text-black leading-5 md:leading-7">
                 Come si
                 <br />
@@ -544,12 +551,15 @@ function SectionImplants() {
                 <br />
                 una visita
               </h4>
-              <span className="self-end w-9 h-9 md:w-12 md:h-12 rounded-full border border-black flex items-center justify-center">
+              <span className="self-end w-9 h-9 md:w-12 md:h-12 rounded-full border border-black flex items-center justify-center transition-colors duration-200 group-hover:bg-black group-hover:text-white">
                 <ArrowIcon />
               </span>
-            </div>
+            </a>
 
-            <div className="flex-1 bg-white/20 backdrop-blur-xl rounded-xl md:rounded-2xl p-3 md:p-5 flex flex-col justify-between h-36 md:h-52">
+            <a
+              href="/studio"
+              className="group flex-1 bg-white/20 backdrop-blur-xl rounded-xl md:rounded-2xl p-3 md:p-5 flex flex-col justify-between h-36 md:h-52"
+            >
               <h4 className="text-lg md:text-2xl font-bold text-white leading-5 md:leading-7">
                 Cosa
                 <br />
@@ -557,10 +567,10 @@ function SectionImplants() {
                 <br />
                 ogni volta
               </h4>
-              <span className="self-end w-9 h-9 md:w-12 md:h-12 rounded-full border border-white flex items-center justify-center">
-                <ArrowIcon className="text-white" />
+              <span className="self-end w-9 h-9 md:w-12 md:h-12 rounded-full border border-white flex items-center justify-center transition-colors duration-200 group-hover:bg-white">
+                <ArrowIcon className="text-white transition-colors duration-200 group-hover:text-black" />
               </span>
-            </div>
+            </a>
           </div>
         </div>
       </div>
@@ -582,6 +592,7 @@ export default function App() {
       <SectionGallery />
       <SectionImplants />
       <SectionShowcase />
+      <SiteFooter />
     </div>
   )
 }

@@ -11,18 +11,11 @@ export const metadata: Metadata = {
 }
 
 export default function FrontendLayout({ children }: { children: React.ReactNode }) {
+  // Font: Open Sauce One self-hostato, @font-face in globals.css (public/fonts, OFL).
+  // Niente preload manuale: React 19 perde l'`as` sui <link> hoisted e il browser
+  // scarta il preload con un warning; a 15 KB per peso non cambia nulla.
   return (
     <html lang="it">
-      <head>
-        <link
-          href="https://db.onlinewebfonts.com/c/1cd1e7d71e048159076fd90b39846902?family=Open+Sauce+One"
-          rel="stylesheet"
-        />
-        <link
-          href="https://db.onlinewebfonts.com/c/42acf9aa4a6dc2f2886a3f682e337ead?family=Open+Sauce+One+Bold"
-          rel="stylesheet"
-        />
-      </head>
       <body>{children}</body>
     </html>
   )

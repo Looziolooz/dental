@@ -18,6 +18,8 @@ export const BRAND = {
   phoneHref: 'tel:+390212345678',
   email: 'info@auradental.it',
   hours: 'Lun–Ven 09:00–18:00',
+  /** Indirizzo dimostrativo, come tutti i recapiti della demo. */
+  address: 'Via dei Gracchi 18, 20146 Milano',
 } as const
 
 /** Titolo di una pagina, col nome dello studio in coda. */

@@ -16,17 +16,18 @@ export type ServiceContent = {
 
 /**
  * Immagine di riserva quando il campo `image` del CMS e' vuoto.
- * Ci sono 5 immagini per 6 prestazioni: `hero` e' ripetuta su sbiancamento e faccette,
- * messe in posizioni non adiacenti nella griglia. Caricando le immagini vere dal CMS
- * questa mappa smette di servire.
+ * Sei prestazioni, sei foto distinte (inventario in ASSETS.md). Caricando le
+ * immagini vere dal CMS questa mappa smette di servire.
  */
 export const SERVICE_FALLBACK_IMAGE: Record<string, string> = {
-  'prima-visita': '/images/patient.webp',
-  igiene: '/images/smile-gallery.webp',
-  sbiancamento: '/images/hero.webp',
-  faccette: '/images/hero.webp',
-  corona: '/images/implant-1.webp',
-  impianto: '/images/implant-2.webp',
+  'prima-visita': '/images/visita.webp',
+  igiene: '/images/igiene.webp',
+  sbiancamento: '/images/sorriso-studio.webp',
+  faccette: '/images/ritratto.webp',
+  // corona e impianto usano ritagli derivati (vedi ASSETS.md): il kit igiene su una
+  // card "Corona" e due foto quasi uguali su card adiacenti erano entrambi sbagliati.
+  corona: '/images/corona.webp',
+  impianto: '/images/impianto.webp',
 }
 
 export const SERVICES_CONTENT: Record<string, ServiceContent> = {

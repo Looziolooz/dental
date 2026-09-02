@@ -15,10 +15,30 @@ const ADMIN_PASSWORD = 'demo1234'
 const LEGACY_ADMIN_EMAILS = ['admin@dentalhealth.it', 'admin@studioaurora.it']
 
 const DENTISTS = [
-  { name: 'Dott.ssa Elena Ferri', role: 'Implantologia e chirurgia', color: 'indigo' },
-  { name: 'Dott. Marco Bianchi', role: 'Odontoiatria conservativa', color: 'emerald' },
-  { name: 'Dott.ssa Sara Conti', role: 'Ortodonzia', color: 'amber' },
-  { name: 'Dott. Luca Ricci', role: 'Igiene e prevenzione', color: 'rose' },
+  {
+    name: 'Dott.ssa Elena Ferri',
+    role: 'Implantologia e chirurgia',
+    color: 'indigo',
+    bio: 'Pianifica ogni impianto al computer su TAC 3D e opera con dima chirurgica. Segue i casi complessi e le riabilitazioni complete.',
+  },
+  {
+    name: 'Dott. Marco Bianchi',
+    role: 'Odontoiatria conservativa',
+    color: 'emerald',
+    bio: 'Otturazioni, intarsi e corone: il suo lavoro è salvare denti. Prima di proporre una protesi ti spiega cosa si può ancora conservare.',
+  },
+  {
+    name: 'Dott.ssa Sara Conti',
+    role: 'Ortodonzia',
+    color: 'amber',
+    bio: 'Allineatori trasparenti e ortodonzia fissa, per adulti e ragazzi. Ogni piano parte da una scansione digitale, mai dal calco.',
+  },
+  {
+    name: 'Dott. Luca Ricci',
+    role: 'Igiene e prevenzione',
+    color: 'rose',
+    bio: 'Guida i richiami di igiene e insegna la manutenzione quotidiana. È chi vedrai più spesso, perché tu veda gli altri il meno possibile.',
+  },
 ] as const
 
 // Solo i campi che governano calendario e listino. Testi e contenuto della pagina
@@ -65,6 +85,28 @@ async function applyServiceContent(payload: Payload) {
   return updated
 }
 
+/**
+ * Come applyServiceContent, ma per le bio degli odontoiatri: si correggono qui
+ * e si rilancia `npm run seed`, senza toccare agenda e colori scelti dall'admin.
+ */
+async function applyDentistBios(payload: Payload) {
+  let updated = 0
+  for (const d of DENTISTS) {
+    const found = await payload.find({
+      collection: 'dentists',
+      where: { name: { equals: d.name } },
+      limit: 1,
+      depth: 0,
+    })
+    const doc = found.docs[0]
+    if (!doc) continue
+
+    await payload.update({ collection: 'dentists', id: doc.id, data: { bio: d.bio } })
+    updated++
+  }
+  return updated
+}
+
 const PATIENTS = [
   'Giulia Moretti', 'Andrea Russo', 'Chiara Esposito', 'Matteo Greco', 'Francesca Rizzo',
   'Davide Marino', 'Alessia Gallo', 'Simone Costa', 'Martina Fontana', 'Lorenzo Barbieri',
@@ -98,8 +140,9 @@ const seed = async () => {
       payload.logger.info(`Admin rinominato: ${previous} -> ${ADMIN_EMAIL}`)
     }
     const updated = await applyServiceContent(payload)
+    const bios = await applyDentistBios(payload)
     payload.logger.info(
-      `Seed gia' eseguito: aggiornato il contenuto di ${updated} prestazioni, il resto e' intatto.`,
+      `Seed gia' eseguito: aggiornato il contenuto di ${updated} prestazioni e ${bios} bio, il resto e' intatto.`,
     )
     process.exit(0)
   }

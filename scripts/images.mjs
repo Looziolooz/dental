@@ -65,6 +65,41 @@ const TARGETS = [
     serve:
       'VERTICALE, ritratto 2:3. Sorriso aperto e denti visibili: la card ne ritaglia una fascia attorno alla bocca, e la linea di richiamo deve poter cadere su un dente.',
   },
+  {
+    name: 'visita',
+    minRatio: 0.4,
+    maxWidth: 1600,
+    uso: '/studio — hero · fallback prima visita',
+    serve: 'VERTICALE. Un controllo alla poltrona: odontoiatra e paziente riconoscibili.',
+  },
+  {
+    name: 'accoglienza',
+    minRatio: 0.4,
+    maxWidth: 1600,
+    uso: '/studio e /contatti — pannello accoglienza',
+    serve: 'VERTICALE. L’attesa vissuta: una persona a suo agio, luce calda, niente camici.',
+  },
+  {
+    name: 'ritratto',
+    minRatio: 0.4,
+    maxWidth: 1600,
+    uso: 'fallback faccette',
+    serve: 'VERTICALE. Ritratto sorridente su fondo chiaro uniforme, denti in vista.',
+  },
+  {
+    name: 'sorriso-studio',
+    minRatio: 0.4,
+    maxWidth: 1600,
+    uso: 'fallback sbiancamento · rail di /prenota',
+    serve: 'VERTICALE. Sorriso in primo piano dentro la sala visite.',
+  },
+  {
+    name: 'kit',
+    minRatio: 0.4,
+    maxWidth: 1600,
+    uso: '/studio — pannello kit',
+    serve: 'VERTICALE. Still life del kit marchiato AURA DENTAL su fondo neutro.',
+  },
 ]
 
 /** Da quali foto si ricavano gli avatar della prova sociale. */

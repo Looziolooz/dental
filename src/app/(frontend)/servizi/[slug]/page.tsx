@@ -53,7 +53,9 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
 
   const image = service.image as Media | null
   const src =
-    (typeof image === 'object' && image?.url) || SERVICE_FALLBACK_IMAGE[slug] || '/images/hero.webp'
+    (typeof image === 'object' && image?.url) ||
+    SERVICE_FALLBACK_IMAGE[slug] ||
+    '/images/showcase.webp'
 
   const benefits = service.benefits ?? []
   const steps = service.steps ?? []
@@ -100,8 +102,14 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
           </div>
 
           <div className="rounded-2xl overflow-hidden min-h-[280px] lg:min-h-0">
+            {/* Le foto sono ritratti 9:16: il taglio tiene la parte alta, dove sta il volto. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={src} alt={service.name} className="w-full h-full object-cover" />
+            <img
+              src={src}
+              alt={service.name}
+              className="w-full h-full object-cover"
+              style={{ objectPosition: '50% 30%' }}
+            />
           </div>
         </div>
 
@@ -177,7 +185,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         {/* ------------------------------------------------------------- cta */}
         <section className="rounded-2xl bg-black text-white p-8 md:p-12 mt-10 md:mt-16 flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-white/60">
+            <p className="text-xs font-semibold text-white/60">
               {service.durationMinutes} minuti ·{' '}
               {service.priceEur > 0 ? formatEur(service.priceEur) : 'gratuita'}
             </p>

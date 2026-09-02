@@ -19,6 +19,20 @@ disco locale ma sono escluse dal repo: 17 MB che non servono ne' al build ne' al
 | `public/images/showcase.webp` | Visita con specchietto, bocca aperta | card di chiusura | 2026-09-01 |
 | `public/video/studio.mp4` | Visita in studio, 8s muto in loop | **hero, colonna laterale** (nascosta sotto md) — unica immagine della sezione | 2026-09-01 |
 | `public/video/igiene.mp4` | Spazzolino in bagno, 8s | **non usato**, disponibile | 2026-09-01 |
+| `public/images/visita.webp` | Controllo alla poltrona con specchietto | `/studio` hero · fallback prima visita | 2026-09-02 |
+| `public/images/accoglienza.webp` | Paziente col caffè, lobby in marmo | `/studio` e `/contatti`, pannello accoglienza | 2026-09-02 |
+| `public/images/ritratto.webp` | Ritratto sorridente, fondo chiaro | fallback faccette | 2026-09-02 |
+| `public/images/sorriso-studio.webp` | Sorriso in sala visite, maglione rosso | fallback sbiancamento · rail di `/prenota` | 2026-09-02 |
+| `public/images/kit.webp` | Kit **AURA DENTAL** con brochure rossa | `/studio` pannello kit (fallback impianto è `showcase.webp`: kit e implant-1 sono quasi identici e le card sarebbero adiacenti) | 2026-09-02 |
+
+| `public/images/corona.webp` | Ritaglio macro di `showcase.webp` (denti + specchietto) | fallback corona | 2026-09-02 |
+| `public/images/impianto.webp` | Ritaglio strumenti di `implant-1.webp` | fallback impianto | 2026-09-02 |
+
+Le righe del 2026-09-02 vengono dalle sorgenti Pomelli già in `_nuove/`: sono state promosse
+(sharp, webp q82, max 1600px) scegliendo solo gli scatti **senza marchio o marchiati AURA DENTAL**.
+Gli scatti "Studio Aurora" / "Aurora" restano in `_nuove/` e non vanno usati: brand sbagliato.
+`corona.webp` e `impianto.webp` sono **ritagli derivati** (sharp `extract`), come gli avatar:
+servivano sei foto distinte per sei card e il set utilizzabile ne offriva quattro.
 
 Licenza: generati per questo progetto tramite Pomelli sull'account del committente.
 
@@ -46,7 +60,7 @@ senza audio li porta a ~280 KB, con `+faststart` per l'avvio progressivo. Ogni v
 | File | Sorgente | Come | Data | Licenza |
 |---|---|---|---|---|
 | `public/images/avatars/smile.webp` | `smile-gallery.webp` | `npm run images` | 2026-09-01 | eredita l'originale |
-| `public/images/avatars/hero.webp` | `hero.webp` | `npm run images` | 2026-09-01 | eredita l'originale |
+| `public/images/avatars/igiene.webp` | `igiene.webp` | `npm run images` | 2026-09-01 | eredita l'originale |
 | `public/images/avatars/showcase.webp` | `showcase.webp` | `npm run images` | 2026-09-01 | eredita l'originale |
 
 Vanno pre-ritagliati e non ottenuti con `object-position`: le foto sorgente sono panoramiche, e
@@ -73,7 +87,7 @@ costanti in cima a `src/components/landing/SectionShowcase.tsx`:
 
 ```bash
 # 1. metti i file qui, con questi nomi (jpg, png, webp, jfif — qualsiasi dimensione)
-public/images/_nuove/{hero,smile-gallery,implant-1,implant-2,patient}.jpg
+public/images/_nuove/{igiene,smile-gallery,implant-1,implant-2,showcase,visita,accoglienza,ritratto,sorriso-studio,kit}.jpg
 
 # 2.
 npm run images
@@ -118,7 +132,9 @@ impianto" / "Curare gli impianti nel tempo") è un `<svg>` inline in `src/compon
 
 ## Font
 
-`Open Sauce One`, caricato da `db.onlinewebfonts.com` in `src/app/(frontend)/layout.tsx` come da
-spec, con fallback di sistema (`-apple-system, BlinkMacSystemFont, sans-serif`). Se anche i font
-devono essere self-hosted, scarica i `.woff2` in `public/fonts/` e sostituisci i due `<link>` con
-un `@font-face` in `globals.css`.
+`Open Sauce One`, **self-hostato** in `public/fonts/` (cinque pesi woff2: 400/500/600/700/800,
+~15 KB l'uno, convertiti dai TTF ufficiali con `wawoff2`). Sorgente:
+`github.com/marcologous/Open-Sauce-Fonts`, licenza SIL OFL (copia in `public/fonts/OFL.txt`).
+I `@font-face` stanno in `globals.css`, il preload dei due pesi del primo viewport in
+`src/app/(frontend)/layout.tsx`. Il vecchio caricamento da `db.onlinewebfonts.com` è stato
+rimosso il 2026-09-02: era l'ultimo asset servito da un CDN di terzi.
